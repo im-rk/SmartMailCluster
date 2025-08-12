@@ -13,7 +13,8 @@ class Graph{
     Graph(int n);
     void addEdge(int fromEmail,int toEmail);
     vector<int> getNeighbours(int emialId);
-
+    void BFS(int startEmail);
+    void DFS(int startEmail);
 };
 
 #endif
