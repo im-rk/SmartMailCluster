@@ -1,0 +1,11 @@
+from,to,subject,body,type,parent_email_id
+1,2,Meeting Update,The meeting is at 3 PM.,original,-
+3,4,Project Status,Can you send me the report?,original,-
+5,6,Party Invitation,You�re invited to the party!,original,-
+2,1,RE: Meeting Update,Thanks for the update.,reply,0
+4,3,RE: Project Status,Report will be ready soon.,reply,1
+6,5,RE: Party Invitation,I�ll definitely join.,reply,2
+1,3,RE: Project Status,Please send it by Friday.,reply,2
+7,2,FWD: Meeting Update,Sharing the meeting details.,forward,0
+8,6,FWD: Party Invite,Forwarding this invite to you.,forward,2
+4,5,FWD: Project Status,Check the report details.,forward,1

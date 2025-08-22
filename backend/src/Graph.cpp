@@ -2,11 +2,14 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+
+
 Graph::Graph(int n)
 {
     numUsers=n;
-    adjList.resize(n);
-    adjMatrix.resize(n,vector<int> (n,0));
+    adjList.resize(n+1);
+    adjMatrix.resize(n+1,vector<int> (n+1,0));
+    threadGraph.resize(1000);
     nextEmailId=0;
     nextThreadId=100;
 }
@@ -16,7 +19,7 @@ int Graph::getNextThreadId()
     return nextThreadId++;
 }
 
-void Graph::addEdge(int fromEmail,int toEmail,int thread_id)
+void Graph::addEdge(int fromEmail,int toEmail,int thread_id)    
 {
     bool found=false;
     for(auto &edge: adjList[fromEmail])
@@ -40,91 +43,109 @@ void Graph::sendEmail(int from,int to,string subject, string body)
 {
     int threadId=getNextThreadId();
     addEdge(from,to,threadId);
-    emailStore.push_back({nextEmailId++,from,to,threadId,subject,body});
-    cout<<"Email sent.Thread ID:"<<threadId<<"\n";
+    Email newEmail = {nextEmailId++, from, to, threadId, subject, body};
+    emailStore.insert(newEmail);
+    cout<< "Email sent "
+            << " | From: " << from
+            << " | To: " << to
+            << " | Subject: " << subject
+            << " | EmailId: " << newEmail.email_id
+            << "\n";
+    cout<<"\n";
 }
 
-void Graph:: replyEmail(int email_id,int from,int to,string body)
+void Graph::replyEmail(int email_id, int from, int to, string body)
 {
-    for(auto  email:emailStore)
-    {
-        if(email.email_id==email_id)
-        {
-            addEdge(from,to,email.thread_id);
-
-            string reply_subject="RE: "+email.subject;
-            emailStore.push_back({
-                nextEmailId++,
-                from,
-                to,
-                email.thread_id,
-                reply_subject,
-                body
-            });
-        }
-        cout << "Reply sent to Email ID " << email_id 
-                 << " in Thread " << email.thread_id << "\n";
+    Email* original = emailStore.search(email_id);
+    if (!original) {
+        cout << "Error: Email ID " << email_id << " not found.\n";
+        cout<<"\n";
         return;
     }
-    cout << "Error: Email ID " << email_id << " not found.\n";
+
+    if (from != original->from && from != original->to) {
+        cout << "Error: User " << from << " is not allowed to reply to Email ID " << email_id << ".\n";
+        cout<<"\n";
+        return;
+    }
+
+    addEdge(from, to, original->thread_id);
+
+    string reply_subject = "RE: " + original->subject;
+    Email reply = {nextEmailId++, from, to, original->thread_id, reply_subject, body};
+    emailStore.insert(reply);
+    threadGraph[original->email_id].push_back({reply.email_id,"reply"});
+    cout << "Reply sent to Email ID " << email_id
+            << " | From: " << from
+            << " | To: " << to
+            << " | Subject: " << body
+            <<"|Email id:"<<reply.email_id
+            << "\n";
+    cout<<"\n";
 }
+
 
 void Graph::forwardEmail(int email_id,int from,int to,string body)
 {
-    for(auto email:emailStore)
-    {
-        if(email.email_id==email_id)
-        {
-            addEdge(from,to,email.thread_id);
-
-            string fwd_sub="FWD: "+email.subject;
-            emailStore.push_back({
-                nextEmailId++,
-                from,
-                to,
-                email.thread_id,
-                fwd_sub,
-                body
-            });
-
-            cout<<"Email forwarded from Email ID"<<email_id
-                <<"in thread"<<email.thread_id<<"\n";
-        }
-
+    Email* original = emailStore.search(email_id);  
+    if (!original) {
+        cout << "Error: Email ID " << email_id << " not found.\n";
+        cout<<"\n";
+        return;
     }
+
+    if (from != original->from && from != original->to) {
+        cout << "Error: User " << from << " is not allowed to forward Email ID " << email_id << ".\n";
+        cout<<"\n";
+        return;
+    }
+
+    addEdge(from, to, original->thread_id);
+
+    string fwd_sub = "FWD: " + original->subject;
+    Email fwd = {nextEmailId++, from, to, original->thread_id, fwd_sub, body};
+    emailStore.insert(fwd);
+    threadGraph[original->email_id].push_back({fwd.email_id,"forward"});
+    cout << "Email forwarded from Email ID " << email_id
+            << " | From: " << from
+            << " | To: " << to
+            << " | Subject: " << body
+            <<"|Email id:"<< fwd.email_id
+            << "\n";;
+    cout<<"\n";
 }
 
-void Graph::viewThread(int email_id)
-{
-    int thread_id=-1;
-    
-    for(auto email:emailStore)
-    {
-        if(email.email_id==email_id)
-        {
-            thread_id=email.thread_id;
-            break;
+
+void Graph::viewThread(int rootEmailId) {
+    cout << "Viewing thread starting from Email ID " << rootEmailId << ":\n";
+
+    queue<int> q;
+    unordered_set<int> visited;
+
+    q.push(rootEmailId);
+    visited.insert(rootEmailId);
+
+    while (!q.empty()) {
+        int curr = q.front();
+        q.pop();
+
+        Email *e = emailStore.search(curr);
+        cout << "Email ID: " << e->email_id
+             << " From: " << e->from
+             << " To: " << e->to
+             << " Subject: " << e->subject
+             << " Body: " << e->body << "\n";
+
+        for (auto &edge : threadGraph[curr]) {
+            if (!visited.count(edge.toEmailId)) {
+                q.push(edge.toEmailId);
+                visited.insert(edge.toEmailId);
+            }
         }
     }
-
-    if(thread_id==-1)
-    {
-        cout<<"Error: Email id"<<email_id<<"not found\n";
-        return ;
-    }
-
-    cout<<"Thread"<<thread_id<<":\n";
-    for(auto email:emailStore)
-    {
-        if(email.email_id==thread_id)
-        {
-            cout<<"Email ID: "<<email.email_id
-                << "| From"<<email.from<<"-> To"<<email.to
-                << "| Subject :"<<email.subject
-                << "| Body "<<email.body<<"\n";
-        }
-    }
+    cout << "\n";
 }
+
 
 // void Graph::BFS(int startEmail)
 // {
