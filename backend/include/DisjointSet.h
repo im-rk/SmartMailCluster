@@ -16,4 +16,5 @@ class DisjointSet{
     void unionbyRank(int u,int v);
     void unionbySize(int u,int v);
 };
+
 #endif
