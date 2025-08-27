@@ -24,7 +24,7 @@ void Graph::addEdge(int fromEmail,int toEmail,int thread_id)
     bool found=false;
     for(auto &edge: adjList[fromEmail])
     {
-        if (edge.to==toEmail && edge.thread_id==thread_id)
+        if (edge.to==toEmail)
         {
             edge.weight++;
             found=true;

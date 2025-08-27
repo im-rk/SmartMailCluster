@@ -13,7 +13,7 @@ int main() {
     Graph mailSystem(numUsers);
 
     // ================= Load dataset =================
-    ifstream file("email_dataset_50.csv");  // <-- dataset file
+    ifstream file("email_datasets_10.csv");  // <-- dataset file
     if (!file.is_open()) {
         cout << "Error: Could not open dataset file!" << endl;
         return 1;
@@ -57,7 +57,7 @@ int main() {
     }
 
     file.close();
-    cout << "\n✅ All dataset emails loaded successfully!\n";
+    cout << "\n All dataset emails loaded successfully!\n";
 
     // ================== Menu ==================
     int choice;
