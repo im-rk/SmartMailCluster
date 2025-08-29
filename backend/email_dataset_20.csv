@@ -1,0 +1,21 @@
+from,to,subject,body,type,parent_email_id
+4,7,Follow-up,Please review the attached file.,original,-
+6,4,Follow-up,You're invited to the party!,reply,0
+1,8,Deadline Reminder,We need to finalize the budget.,forward,1
+2,4,Party Invitation,General update on the project.,reply,1
+7,1,Project Status,Can you send me the report?,forward,1
+6,1,Party Invitation,Can you send me the report?,forward,2
+8,5,Deadline Reminder,Here is the new assignment.,reply,3
+8,9,Meeting Update,Can you send me the report?,reply,5
+1,6,General Notice,Report will be ready soon.,reply,1
+1,3,Client Feedback,Here is the new assignment.,forward,7
+4,8,General Notice,We need to finalize the budget.,forward,6
+9,2,Project Status,You're invited to the party!,reply,6
+1,9,Deadline Reminder,Please review the attached file.,reply,9
+2,7,Budget Review,The meeting is at 3 PM.,original,-
+5,6,Project Status,We need to finalize the budget.,original,-
+3,4,Weekly Report,We need to finalize the budget.,reply,7
+2,5,Deadline Reminder,Can you send me the report?,original,-
+3,1,Project Status,We need to finalize the budget.,forward,9
+5,4,Weekly Report,We need to finalize the budget.,forward,3
+3,9,Budget Review,You're invited to the party!,original,-
