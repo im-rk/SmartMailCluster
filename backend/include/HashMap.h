@@ -11,33 +11,47 @@ struct Email {
     int thread_id;
     string subject;
     string body;
+    int parent_id;
 };
 
 class HashMap {
 private:
-    static const int SIZE = 100;
+    int capacity ;
+    int usercount;
+    int emailcount;
+    const double loadfactor=0.7;
     static const int PRIME = 97;
 
-    Email table[SIZE];
-    bool occupied[SIZE];
+    vector<Email> table;
+    vector<bool> occupied;
+    vector<string> tableuser;    // user-email storage
+    vector<bool> occupieduser;
 
     int Hash(int key);
     int PrimeHash(int key);
     int DoubleHash(int key, int attempt);
 
 public:
-    HashMap();
+    HashMap(int initialSize=100);
 
     void insert(Email email);
     Email* search(int email_id);
+    void userinsert(int id, string emailadd);
+    string usersearch(int email_id);
     void remove(int email_id);
     void printAll();
 
+    void rehash();
+
+    int getcapacity() const {return capacity;};
+    int getusercount() const {return usercount;};
+    int getemailcount() const {return emailcount;};
     // Public getters for private members
-    int getSize() const { return SIZE; }
-    bool isOccupied(int index) const { return occupied[index]; }
-    void setOccupied(int index, bool value) { occupied[index] = value; }
-    Email* getTable() { return table; } 
+    // int getSize() const { return SIZE; }
+    // bool isOccupied(int index) const { return occupied[index]; }
+    // void setOccupied(int index, bool value) { occupied[index] = value; }
+    // Email* getTable() { return table; } 
+
 };
 
 #endif
