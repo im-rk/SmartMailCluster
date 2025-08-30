@@ -12,6 +12,8 @@ int main() {
 
     Graph mailSystem(numUsers);
 
+    //==================Load email id's for every user=======
+    
     // ================= Load dataset =================
     ifstream file("email_datasets_10.csv");  // <-- dataset file
     if (!file.is_open()) {

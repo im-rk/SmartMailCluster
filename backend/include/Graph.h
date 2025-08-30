@@ -26,10 +26,11 @@ class Graph{
     int nextEmailId;
     int nextThreadId;
 
+
     public:
     Graph(int n);
     void addEdge(int fromEmail,int toEmail,int threadId);
-
+    void addUserAddress(int id,string email);
     void sendEmail(int from ,int to ,string subject, string body);
     void replyEmail(int email_id,int from,int to,string body);
     void forwardEmail(int email_id,int from,int to,string body);

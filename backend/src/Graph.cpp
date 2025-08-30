@@ -19,6 +19,11 @@ int Graph::getNextThreadId()
     return nextThreadId++;
 }
 
+void Graph::addUserAddress(int id,string email)
+{
+    emailStore.userinsert(id,email);
+}
+
 void Graph::addEdge(int fromEmail,int toEmail,int thread_id)    
 {
     bool found=false;
@@ -43,7 +48,7 @@ void Graph::sendEmail(int from,int to,string subject, string body)
 {
     int threadId=getNextThreadId();
     addEdge(from,to,threadId);
-    Email newEmail = {nextEmailId++, from, to, threadId, subject, body};
+    Email newEmail = {nextEmailId++, from, to, threadId, subject, body,-1};
     emailStore.insert(newEmail);
     cout<< "Email sent "
             << " | From: " << from
@@ -72,7 +77,7 @@ void Graph::replyEmail(int email_id, int from, int to, string body)
     addEdge(from, to, original->thread_id);
 
     string reply_subject = "RE: " + original->subject;
-    Email reply = {nextEmailId++, from, to, original->thread_id, reply_subject, body};
+    Email reply = {nextEmailId++, from, to, original->thread_id, reply_subject, body,email_id};
     emailStore.insert(reply);
     threadGraph[original->email_id].push_back({reply.email_id,"reply"});
     cout << "Reply sent to Email ID " << email_id
@@ -103,7 +108,16 @@ void Graph::forwardEmail(int email_id,int from,int to,string body)
     addEdge(from, to, original->thread_id);
 
     string fwd_sub = "FWD: " + original->subject;
-    Email fwd = {nextEmailId++, from, to, original->thread_id, fwd_sub, body};
+    string finalbody;
+    if(body.empty())
+    {
+        finalbody=original->body;
+    }
+    else
+    {
+        finalbody=body+original->body;
+    }
+    Email fwd = {nextEmailId++, from, to, original->thread_id, fwd_sub, finalbody,email_id};
     emailStore.insert(fwd);
     threadGraph[original->email_id].push_back({fwd.email_id,"forward"});
     cout << "Email forwarded from Email ID " << email_id
