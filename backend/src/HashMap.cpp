@@ -59,6 +59,7 @@ int HashMap::DoubleHash(int key,int attempt)
 
 void HashMap::insert(Email email)
 {
+    if ((double)emailcount / capacity > loadfactor) rehash();
     int i=0;
     int idx;
     do{
@@ -117,12 +118,21 @@ string HashMap::usersearch(int email_id)
     {
         idx=DoubleHash(email_id,i);
         if(!occupieduser[idx]) return "";
-        else
+        if(tableuser[idx]!="" && idx<capacity)
         {
             return tableuser[idx];
         }
         i++;
     }
-    return nullptr;
+    return "";
 }
 
+vector<Email> HashMap::getAllEmails() {
+    vector<Email> emails;
+    for (int i = 0; i < capacity; i++) {
+        if (occupied[i]) {
+            emails.push_back(table[i]);
+        }
+    }
+    return emails;
+}

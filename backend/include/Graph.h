@@ -35,7 +35,7 @@ class Graph{
     void replyEmail(int email_id,int from,int to,string body);
     void forwardEmail(int email_id,int from,int to,string body);
     void viewThread(int email_id);
-
+    HashMap& getEmailStore() { return emailStore; }
     int getNextThreadId();
 };
 

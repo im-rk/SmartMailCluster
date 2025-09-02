@@ -1,6 +1,6 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
-
+#include<bits/stdc++.h>
 #include <string>
 using namespace std;
 
@@ -46,6 +46,7 @@ public:
     int getcapacity() const {return capacity;};
     int getusercount() const {return usercount;};
     int getemailcount() const {return emailcount;};
+    vector<Email> getAllEmails();
     // Public getters for private members
     // int getSize() const { return SIZE; }
     // bool isOccupied(int index) const { return occupied[index]; }
