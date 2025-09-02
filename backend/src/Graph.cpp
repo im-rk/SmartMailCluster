@@ -132,12 +132,20 @@ void Graph::forwardEmail(int email_id,int from,int to,string body)
 
 void Graph::viewThread(int rootEmailId) {
     cout << "Viewing thread starting from Email ID " << rootEmailId << ":\n";
+    Email *e=emailStore.search(rootEmailId);
+
+    int rootid=rootEmailId;
+    while(e && e->parent_id!=-1)
+    {
+        rootid=e->parent_id;
+        e=emailStore.search(rootid);
+    }
 
     queue<int> q;
     unordered_set<int> visited;
 
-    q.push(rootEmailId);
-    visited.insert(rootEmailId);
+    q.push(rootid);
+    visited.insert(rootid);
 
     while (!q.empty()) {
         int curr = q.front();
