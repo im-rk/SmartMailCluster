@@ -6,7 +6,7 @@ DisjointSet::DisjointSet(int n)
 {
     parent.resize(n+1);
     rank.resize(n+1,0);
-    size.resize(n+1);
+    //size.resize(n+1);
     for(int i=0;i<=n;i++)
     {
         parent[i]=i;
@@ -45,24 +45,24 @@ void DisjointSet::unionbyRank(int u,int v)
     }
 }
 
-void DisjointSet::unionbySize(int u,int v)
-{
-    int ulp_u=findUPar(u);
-    int ulp_v=findUPar(v);
-    if(ulp_u==ulp_v)
-    {
-        return ;
-    }
-    if(size[ulp_u]<size[ulp_v])
-    {
-        parent[ulp_u]=ulp_v;
-        size[ulp_v]+=size[ulp_u];
-    }
-    else
-    {
-        parent[ulp_v]=ulp_u;
-        size[ulp_u]+=size[ulp_v];
-    }
-}
+// void DisjointSet::unionbySize(int u,int v)
+// {
+//     int ulp_u=findUPar(u);
+//     int ulp_v=findUPar(v);
+//     if(ulp_u==ulp_v)
+//     {
+//         return ;
+//     }
+//     if(size[ulp_u]<size[ulp_v])
+//     {
+//         parent[ulp_u]=ulp_v;
+//         size[ulp_v]+=size[ulp_u];
+//     }
+//     else
+//     {
+//         parent[ulp_v]=ulp_u;
+//         size[ulp_u]+=size[ulp_v];
+//     }
+// }
 
 

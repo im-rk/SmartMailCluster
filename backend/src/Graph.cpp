@@ -9,7 +9,7 @@ Graph::Graph(int n)
     numUsers=n;
     adjList.resize(n+1);
     adjMatrix.resize(n+1,vector<int> (n+1,0));
-    threadGraph.resize(1000);
+    // threadGraph will grow dynamically as emails are added
     nextEmailId=0;
     nextThreadId=100;
 }
@@ -49,6 +49,9 @@ void Graph::sendEmail(int from,int to,string subject, string body)
     int threadId=getNextThreadId();
     addEdge(from,to,threadId);
     Email newEmail = {nextEmailId++, from, to, threadId, subject, body,-1};
+    if ((int)threadGraph.size() <= newEmail.email_id) {
+        threadGraph.resize(newEmail.email_id + 1);
+    }
     emailStore.insert(newEmail);
     cout<< "Email sent "
             << " | From: " << from
@@ -78,6 +81,9 @@ void Graph::replyEmail(int email_id, int from, int to, string body)
 
     string reply_subject = "RE: " + original->subject;
     Email reply = {nextEmailId++, from, to, original->thread_id, reply_subject, body,email_id};
+    if ((int)threadGraph.size() <= reply.email_id) {
+        threadGraph.resize(reply.email_id + 1);
+    }
     emailStore.insert(reply);
     threadGraph[original->email_id].push_back({reply.email_id,"reply"});
     cout << "Reply sent to Email ID " << email_id
@@ -118,6 +124,9 @@ void Graph::forwardEmail(int email_id,int from,int to,string body)
         finalbody=body+original->body;
     }
     Email fwd = {nextEmailId++, from, to, original->thread_id, fwd_sub, finalbody,email_id};
+    if ((int)threadGraph.size() <= fwd.email_id) {
+        threadGraph.resize(fwd.email_id + 1);
+    }
     emailStore.insert(fwd);
     threadGraph[original->email_id].push_back({fwd.email_id,"forward"});
     cout << "Email forwarded from Email ID " << email_id
@@ -224,3 +233,49 @@ void Graph::viewThread(int rootEmailId) {
 //         cout << "\n";
 //     }
 // }
+
+void Graph::printAdjList() {
+    cout << "\nAdjacency List:\n";
+    for (int i = 1; i <= numUsers; i++) {
+        cout << i << " -> ";
+        for (auto &edge : adjList[i]) {
+            cout << "(to: " << edge.to 
+                 << ", weight: " << edge.weight 
+                 << ", thread_id: " << edge.thread_id << ") ";
+        }
+        cout << "\n";
+    }
+    cout << "\n";
+}
+
+void Graph::printAdjMatrix() {
+    cout << "\nAdjacency Matrix:\n    ";
+    for (int j = 1; j <= numUsers; j++) {
+        cout << j << " ";
+    }
+    cout << "\n";
+
+    for (int i = 1; i <= numUsers; i++) {
+        cout << i << " : ";
+        for (int j = 1; j <= numUsers; j++) {
+            cout << adjMatrix[i][j] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "\n";
+}
+
+void Graph::printThreadGraph() {
+    cout << "\nThread Graph:\n";
+    for (int i = 0; i < (int)threadGraph.size(); i++) {
+        if (!threadGraph[i].empty()) {
+            cout << "Email " << i << " -> ";
+            for (auto &edge : threadGraph[i]) {
+                cout << "(toEmailId: " << edge.toEmailId 
+                     << ", type: " << edge.relation << ") ";
+            }
+            cout << "\n";
+        }
+    }
+    cout << "\n";
+}

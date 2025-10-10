@@ -15,8 +15,8 @@ public:
     void clusterEmails(Graph &graph);
 
 private:
-    // DFS helper for traversing trie and uniting email ids
-    void clusterFromTrie(TrieNode *node, DisjointSet &dsu);
+    // DFS helper: fills commonCount with word-sharing stats
+    void clusterFromTrie(TrieNode *node, unordered_map<int, unordered_map<int,int>> &commonCount);
 };
 
 #endif // CLUSTER_H

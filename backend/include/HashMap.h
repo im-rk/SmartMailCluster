@@ -20,11 +20,12 @@ private:
     int usercount;
     int emailcount;
     const double loadfactor=0.7;
-    static const int PRIME = 97;
+    int PRIME;
 
     vector<Email> table;
     vector<bool> occupied;
-    vector<string> tableuser;    // user-email storage
+    vector<string> tableuser;    // user-email storage (value)
+    vector<int> tableuserid;     // parallel storage for user ids (key)
     vector<bool> occupieduser;
 
     int Hash(int key);
@@ -32,7 +33,7 @@ private:
     int DoubleHash(int key, int attempt);
 
 public:
-    HashMap(int initialSize=100);
+    HashMap(int initialSize=1000);
 
     void insert(Email email);
     Email* search(int email_id);
@@ -42,7 +43,7 @@ public:
     void printAll();
 
     void rehash();
-
+    int getLargestPrimeBelow(int n);
     int getcapacity() const {return capacity;};
     int getusercount() const {return usercount;};
     int getemailcount() const {return emailcount;};
