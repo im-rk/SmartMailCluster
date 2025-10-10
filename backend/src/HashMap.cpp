@@ -10,36 +10,66 @@ HashMap::HashMap(int initialSize) {
     occupied.assign(capacity, false);
     tableuser.assign(capacity, "");
     occupieduser.assign(capacity, false);
+    tableuserid.assign(capacity, -1);
+    PRIME=getLargestPrimeBelow(capacity);
 }
 
 void HashMap::rehash() {
     int oldCapacity = capacity;
-    capacity *= 2;  // double the table size
+
+    // backup old data
     vector<Email> oldTable = table;
     vector<bool> oldOccupied = occupied;
     vector<string> oldTableUser = tableuser;
     vector<bool> oldOccupiedUser = occupieduser;
+    vector<int> oldTableUserId = tableuserid;
 
-    // reset new bigger arrays
+    // double the capacity
+    capacity *= 2;
+
+    // allocate new larger tables
     table.assign(capacity, Email());
     occupied.assign(capacity, false);
     tableuser.assign(capacity, "");
     occupieduser.assign(capacity, false);
+    tableuserid.assign(capacity, -1);
+
+    // reset counts
     emailcount = 0;
-    usercount=0;                                              // this for rehashing the tableuser too....
-    // reinsert emails
+    usercount = 0;
+    PRIME=getLargestPrimeBelow(capacity);
+
+    // reinsert all emails
     for (int i = 0; i < oldCapacity; i++) {
         if (oldOccupied[i]) {
             insert(oldTable[i]);
         }
     }
-    // reinsert users
+
+    // reinsert all user entries
     for (int i = 0; i < oldCapacity; i++) {
         if (oldOccupiedUser[i]) {
-            userinsert(i, oldTableUser[i]);
+            userinsert(oldTableUserId[i], oldTableUser[i]);
         }
     }
+    cout << "Rehash complete. New capacity = " << capacity << endl;
 }
+
+int HashMap::getLargestPrimeBelow(int n) {
+    auto isPrime = [](int x) {
+        if (x < 2) return false;
+        for (int i = 2; i * i <= x; i++) {
+            if (x % i == 0) return false;
+        }
+        return true;
+    };
+
+    for (int i = n - 1; i >= 2; i--) {
+        if (isPrime(i)) return i;
+    }
+    return 2; 
+}
+
 
 
 int HashMap::Hash(int key)
@@ -69,16 +99,22 @@ void HashMap::insert(Email email)
             table[idx]=email;
             occupied[idx]=true;
             emailcount++;
+            //for(auto x:table){cout<<x.email_id<<"------";}
             return ;
         }
         i++;
     }
     while(i<capacity);
+    // for(auto x:table)
+    // {
+    //     cout<<x.email_id<<"--";
+    // }
     cout<<"Hash table full! could not insert email.\n";
 }
 
 void HashMap::userinsert(int id, string emailadd)
 {
+    if ((double)usercount / capacity > loadfactor) rehash();
     int i=0;
     int idx;
     do{
@@ -86,6 +122,7 @@ void HashMap::userinsert(int id, string emailadd)
         if(!occupieduser[idx])
         {
             tableuser[idx]=emailadd;
+            tableuserid[idx]=id;
             occupieduser[idx]=true;
             usercount++;
             return ;
@@ -118,10 +155,7 @@ string HashMap::usersearch(int email_id)
     {
         idx=DoubleHash(email_id,i);
         if(!occupieduser[idx]) return "";
-        if(tableuser[idx]!="" && idx<capacity)
-        {
-            return tableuser[idx];
-        }
+        if(tableuserid[idx]==email_id) return tableuser[idx];
         i++;
     }
     return "";

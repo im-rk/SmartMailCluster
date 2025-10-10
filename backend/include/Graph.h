@@ -37,6 +37,10 @@ class Graph{
     void viewThread(int email_id);
     HashMap& getEmailStore() { return emailStore; }
     int getNextThreadId();
+    void printAdjList();
+    void printAdjMatrix();
+    void printThreadGraph();
+
 };
 
 #endif

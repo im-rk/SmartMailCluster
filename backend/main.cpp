@@ -14,7 +14,7 @@ int main() {
     Graph g(numUsers);
     Cluster cluster;
 
-    // ================= Load dataset =================
+    //Load dataset 
     ifstream file("email_dataset_20.csv");  
     if (!file.is_open()) {
         cout << "Error: Could not open dataset file!" << endl;
@@ -30,7 +30,6 @@ int main() {
         string from_str, to_str, from_email, to_email;
         string subject, body, type, parent_id_str;
 
-        // Read each field according to dataset columns
         getline(ss, from_str, ',');       // from
         getline(ss, to_str, ',');         // to
         getline(ss, from_email, ',');     // from_email
@@ -41,19 +40,23 @@ int main() {
         getline(ss, parent_id_str, ',');  // parent_email_id
 
         if (from_str.empty() || to_str.empty()) {
-            cout << "⚠️ Skipping invalid row: " << line << endl;
+            cout << " Skipping invalid row: " << line << endl;
             continue;
         }
 
         int from = stoi(from_str);
         int to = stoi(to_str);
 
+        // store email addresses
+        g.addUserAddress(from, from_email);
+        g.addUserAddress(to, to_email);
+
         int parent_id = -1;
         if (!parent_id_str.empty() && parent_id_str != "-") {
             parent_id = stoi(parent_id_str);
         }
 
-        // Call graph methods
+        // send, reply or forward
         if (type == "original") {
             g.sendEmail(from, to, subject, body);
         } 
@@ -65,10 +68,11 @@ int main() {
         }
     }
 
-    file.close();
-    cout << "\n✅ Dataset loaded successfully!\n";
 
-    // ================== Menu ==================
+    file.close();
+    cout << "\n Dataset loaded successfully!\n";
+
+    //  Menu
     int choice;
     do {
         cout << "\n========= Dataset Email System =========\n";
